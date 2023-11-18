@@ -1,1 +1,2 @@
-# just ignore
+# Ignore crash files
+__pycache__/# just ignore

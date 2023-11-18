@@ -10,10 +10,12 @@ def handle_users():
         return jsonify({"users": users})
 
     elif request.method == "POST":
+        # Received new request to add a user
         try:
             data = request.get_json()
             print("printing the data received from frontend", data)
 
+            # Generate a new unique ID based on the length of users dictionary
             new_id = str(len(users))
             users[new_id] = data
 
@@ -25,17 +27,21 @@ def handle_users():
 
 @app.route("/api/users/<user_id>", methods=["GET", "PUT", "DELETE"])
 def handle_user(user_id):
-    """
-    This function takes an ID as a dynamic URL parameter, for example '0'.
-    Note:
-    - GET method is only available for debugging purposes, to test for a specific user
-    open the browser with for example http://localhost:5000/api/users/0 to see the data
-
-    - The assignment is to implement the PUT and DELETE methods for the specific ID, see assignment for specific instructions
-    """
     if user_id in users:
         if request.method == "GET":
             return jsonify(users[user_id])
+        elif request.method == "PUT":
+            # Get the data sent with the request
+            data = request.get_json()
+            if data and "name" in data:
+                # Update the user's name
+                users[user_id]['name'] = data["name"]
+                return jsonify(users[user_id])
+            else:
+                return jsonify({"message": "Invalid data"}), 400
+        elif request.method == "DELETE":
+            # Delete the user
+            del users[user_id]
+            return jsonify({"message": "User deleted successfully"})
     else:
         return jsonify({"message": "User not found"}), 404
-
